@@ -32,8 +32,11 @@ def check_relc_status():
     # print("Current session is {}".format(wd.session_id))
     wd.get(relc_url)
     xpath = "/html/body/div[2]/main/div/div[1]/div/div/div/div[2]/section/div/div/div/div[1]/div[2]/div/ul[1]"
-    status = wd.find_element_by_xpath(xpath)
-    body = status.text
+    try:
+        status = wd.find_element_by_xpath(xpath)
+        body = status.text
+    except:
+        print("cannot find element")
     wd.close()
     wd.quit()
 
