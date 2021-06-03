@@ -7,6 +7,21 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
+def get_user_info():
+    info_path = "./user.info"
+    with open(info_path, "r") as f:
+        info = f.read()
+    user_name, user_passwd = "", ""
+    info = info.split("\n")
+    for ln in info:
+        if "user" in ln:
+            user_name = ln.split(':')[-1].strip()
+        if "passwd" in ln:
+            user_passwd = ln.split(':')[-1].strip()
+
+    return {"user": user_name, "passwd": user_passwd}
+
+
 def check_relc_status():
     previous_msg = 'Registration: [Opens on the 3rd of May 2021, Monday - 9am DELAYED (to be advised by CEA)]'
     driver_path = '/Users/yunfan/Documents/Scraping/chromedriver'
@@ -28,17 +43,19 @@ def check_relc_status():
         s = smtplib.SMTP(host='smtp-mail.outlook.com', port=587)
         # tls port is 587
         s.starttls()
-        s.login("zhangyunfan23@outlook.com", "FANfan19881223")
+        user_info = get_user_info()
+        s.login(user_info["user_name"], user_info["user_passwd"])
         msg = MIMEMultipart()       # create a message
-        msg['From']="zhangyunfan23@outlook.com"
-        msg['To']="yunfan.zhang23@gmail.com"
-        msg['Subject']="Status From RELC Res Web"
+        msg['From'] = user_info["user_name"]
+        msg['To'] = "yunfan.zhang23@gmail.com"
+        msg['Subject'] = "Status From RELC Res Web"
         print(body)
         msg.attach(MIMEText(body, 'plain'))
         s.send_message(msg)
         print('E-mail is sent')
     else:
         print('No Update yet...')
+
 
 if __name__ == '__main__':
     check_relc_status()
